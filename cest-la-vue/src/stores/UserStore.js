@@ -6,7 +6,7 @@ export const useUserStore = defineStore("UserStore", {
   }),
   getters: {
     shortUserList: (state) => {
-      return state.userList.splice(0, 5);
+      return state.userList.slice(0, 5);
     },
   },
   actions: {
