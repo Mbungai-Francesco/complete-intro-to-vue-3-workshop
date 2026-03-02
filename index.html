@@ -1,10 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body></body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Avatar the last Airbender</title>
+		<style>
+			form {
+				display: flex;
+				flex-direction: column;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<form action="">
+				<label for="name"
+					>Name:
+					<input type="text" v-model="name" /> </label
+				><label for="name"
+					>Element:
+					<input type="text" v-model="element" placeholder="water, air" />
+				</label>
+				<input
+					type="submit"
+					value="Create"
+					@click.prevent="createChar"
+					:disabled="!name || !element"
+				/>
+			</form>
+
+			<h2>Statistics</h2>
+			<ul>
+				<li v-for="stats in benderStatistics">{{stats.ele}} benders: {{stats.num}}</li>
+			</ul>
+
+			<h2>Characters</h2>
+			<p v-if="characters.length == 0">There are no characters</p>
+			<!-- <ul v-else-if="characters.length % 2 == 0"> -->
+			<ul v-else>
+				<li v-for="(val, index) in characters">
+					<p>Name: {{ val.name }} <span v-show="val.fav">⭐</span></p>
+					<p>Elements: <span v-for="ele in val.elements">{{ ele }}, </span></p>
+					<input type="button" value="Fav" @click="favBtn(index)" />
+				</li>
+			</ul>
+			<!-- <p v-else>There are odd characters</p> -->
+
+			<h2>Favorites Characters</h2>
+			<ul>
+				<li v-for="(val, index) in characters" v-show="val.fav">
+					<p>{{ val.name }} <span v-show="val.fav">⭐</span></p>
+				</li>
+			</ul>
+
+			<p>
+				<span v-for="(char, index) in characters"
+					>{{char.name}}{{index === characters-1 ? '' : ', '}}</span
+				>
+			</p>
+		</div>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script>
+			const { createApp } = Vue;
+
+			const app = createApp({
+				data: () => ({
+					characters: [
+						{
+							id: "917c2904-1dab-451c-8f03-a1f0908d564d",
+							name: "Aang",
+							fav: false,
+							elements: new Set(["water", "air", "earth", "fire"]),
+						},
+						{
+							id: "d35a41e1-8148-4e8e-9dc8-7887d15bdea5",
+							name: "Zuko",
+							fav: false,
+							elements: new Set(["fire"]),
+						},
+						{
+							id: "3edf093d-52dd-479b-9977-28e4ede6523a",
+							name: "Toph",
+							fav: false,
+							elements: new Set(["earth"]),
+						},
+						{
+							id: "2b4e492f-2941-4b42-af30-4946a9c1ed42",
+							name: "Katara",
+							fav: false,
+							elements: new Set(["water"]),
+						},
+					],
+					name: "",
+					element: "",
+					fav: false,
+				}),
+				computed: {
+					elements() {
+						return this.element.split(", ");
+					},
+					benderStatistics() {
+						const eles = [
+							{ ele: "Water", num: 0 },
+							{ ele: "Air", num: 0 },
+							{ ele: "Earth", num: 0 },
+							{ ele: "Fire", num: 0 },
+						];
+						eles.forEach(val => {
+							this.characters.forEach(char => {
+								if(char.elements.has(val.ele.toLowerCase())) val.num++
+							})
+						})
+						return eles
+					}
+				},
+				methods: {
+					favBtn(pos) {
+						console.log(pos);
+						this.characters[pos].fav = !this.characters[pos].fav;
+					},
+					createChar() {
+						let ran = Math.ceil(Math.random() * 10000);
+						let iD = this.name + ran;
+						let char = {
+							id: iD,
+							name: this.name,
+							fav: false,
+							elements: new Set(this.elements),
+						};
+						this.name = this.element = "";
+						this.characters.push(char);
+					},
+				},
+			});
+
+			app.mount("#app");
+		</script>
+	</body>
 </html>
